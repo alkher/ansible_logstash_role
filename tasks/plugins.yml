@@ -1,0 +1,10 @@
+---
+- name: recoger los plugins instalados
+  shell: /opt/logstash/bin/plugin list
+  register: ls_plugins_instalados
+
+- name: instalar plugins
+  command: /opt/logstash/bin/plugin install {{ item }}
+  notify: reiniciar logstash
+  with_items: ls_plugins
+  when: item not in ls_plugins_instalados.stdout

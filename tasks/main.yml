@@ -1,0 +1,12 @@
+---
+# tasks file for logstash
+# tasks file for logstash
+- include: centos.yml
+  when: ansible_os_family == "RedHat"
+
+- include: configurar_ls.yml
+  when: config_ls
+
+- include: plugins.yml
+
+- include: validar_permisos.yml

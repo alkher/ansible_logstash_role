@@ -1,0 +1,77 @@
+# {{ ansible_managed }}
+# FILE INPUTS
+input {
+  file {
+    path => "/var/log/nginx/access.log"
+    type => "nginx-access"
+    sincedb_path => "{{ ls_log_dir }}/.nginxaccesssincedb"
+  }
+}
+input {
+  file {
+    path => "/var/log/nginx/error.log"
+    type => "nginx-error"
+    sincedb_path => "{{ ls_log_dir }}/.nginxerrorsincedb"
+  }
+}
+input {
+  file {
+    path => "/var/log/redis/redis.log"
+    type => "redis-server"
+    sincedb_path => "{{ ls_log_dir }}/.redissincedb"
+  }
+}
+input {
+  file {
+    path => "/var/log/mail.log"
+    type => "mail-log"
+    sincedb_path => "{{ ls_log_dir }}/.mailsincedb"
+  }
+}
+# INPUTS
+input {
+   redis {
+     type => "redis-input"
+     host => "{{ ls_fqdn }}"
+     data_type => "list"
+     key => "logstash"
+   }
+}
+input {
+  tcp {
+     type => "syslog"
+     port => "514"
+  }
+}
+input {
+  tcp {
+    type => "VMware"
+    port => "1514"
+  }
+}
+input {
+  tcp {
+    type => "vCenter"
+    port => "1515"
+  }
+}
+input {
+  tcp {
+    type => "Fortigate"
+    port => "1517"
+  }
+}
+input {
+  tcp {
+    type => "eventlog"
+    port => "3515"
+    format => "json"
+  }
+}
+input {
+  tcp {
+    type => "iis"
+    port => "3525"
+    codec => "json_lines"
+  }
+}

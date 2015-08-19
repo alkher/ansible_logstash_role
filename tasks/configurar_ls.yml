@@ -1,0 +1,31 @@
+---
+- name: eliminar la configuración original si existe
+  file: path={{ ls_config_dir }}/logstash.conf state=absent
+  notify: reiniciar logstash
+
+- name: configurar workers
+  template: src=logstash.j2 dest=/etc/default/logstash owner=root group=root mode=0664
+  notify: reiniciar logstash
+  when: ls_workers is defined
+
+- name: configurar logstash
+  # template: src={{ item }}.conf.j2 dest={{ ls_config_dir }}/{{ item }}.conf owner=logstash group=logstash mode=0644 validate='/opt/logstash/bin/logstash -tf %s'
+  template: src={{ item }}.conf.j2 dest={{ ls_config_dir }}/{{ item }}.conf owner=logstash group=logstash mode=0644
+  notify: reiniciar logstash
+  with_items: ls_configs
+
+
+- name: crear directorios para los pattern y outputs de elasticsearch
+  file: path={{ item }} state=directory owner=logstash group=logstash mode=0775 recurse=yes
+  with_items:
+    - /opt/logstash/lib/logstash/outputs/elasticsearch
+    - /opt/logstash/patterns
+
+- name: copiar la plantilla de elasticsearch
+  template: src=elasticsearch-template.json.j2 dest=/opt/logstash/lib/logstash/outputs/elasticsearch/elasticsearch-template.json owner=logstash group=logstash
+  notify: reiniciar logstash
+
+- name: configurar los patterns de GROK
+  template: src={{ item }}.j2 dest=/opt/logstash/patterns/{{ item }} owner=logstash group=logstash
+  notify: reiniciar logstash
+  with_items: ls_grok_patterns

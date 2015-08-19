@@ -1,0 +1,5 @@
+---
+# Validación de permisos
+- name: validar permisos en el directorio de logstash
+  file: path={{ ls_folder }} state=directory recurse=yes owner=logstash group=logstash
+  notify: reiniciar logstash

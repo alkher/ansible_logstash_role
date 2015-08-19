@@ -1,0 +1,15 @@
+---
+# Instalación de logstash
+- name: añadir la clave del repositorio de logstash
+  rpm_key: key="https://packages.elasticsearch.org/GPG-KEY-elasticsearch" state=present
+
+- name: añadir el repositorio de logstash
+  template: src=ls_repositorio.j2 dest=/etc/yum.repos.d/logstash.repo
+
+- name: instalar logstash
+  yum: name={{ item }} state=latest
+  with_items:
+    - logstash
+
+- name: iniciar logstash en el arranque del sistema
+  service: name=logstash state=started enabled=yes

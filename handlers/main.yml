@@ -1,0 +1,7 @@
+---
+# handlers file for logstash
+- name: reiniciar logstash
+  service: name=logstash state=restarted
+
+- name: parar logstash-web
+  service: name=logstash-web state=stopped

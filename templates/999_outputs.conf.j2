@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+# OUTPUTS
+output {
+  if [type] != "redis-input" {
+    redis {
+      host => "{{ ls_fqdn }}" 
+      data_type => "list"
+      key => "logstash"
+    }
+  } else {
+    elasticsearch {
+      cluster => "{{ es_cluster_name }}"
+      host => "{{ es_fqdn }}"
+      port => "9300"
+      flush_size => "5000"
+      protocol => "transport"
+      manage_template => true
+      template_overwrite => true
+      template => "/opt/logstash/lib/logstash/outputs/elasticsearch/elasticsearch-template.json"
+      workers => "2"
+    }
+  }
+}
